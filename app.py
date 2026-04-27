@@ -18,7 +18,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Path to your uploaded HTML file
-html_file = os.path.join(os.path.dirname(__file__), "computer_vision_class12_1.html")
+html_file = os.path.join(os.path.dirname(__file__), "ultimate_cv_learning.html")
 
 try:
     with open(html_file, "r", encoding="utf-8") as f:
@@ -28,4 +28,4 @@ try:
     st.components.v1.html(html_content, height=1200, scrolling=True)
 
 except FileNotFoundError:
-    st.error("HTML file not found. Please ensure 'computer_vision_class12_1.html' is in the same directory.")
+    st.error("HTML file not found. Please ensure 'ultimate_cv_learning.html' is in the same directory.")
