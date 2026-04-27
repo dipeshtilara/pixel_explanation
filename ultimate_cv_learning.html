@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Making Machines See — Complete Interactive Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#f5f0e8;--cream2:#ede8de;--cream3:#e4ddd0;
+  --ink:#1a1510;--ink2:#3d3628;--ink3:#6b6050;
+  --red:#d63b2f;--blue:#2563c4;--green:#1a7a4a;--amber:#c47a1a;
+  --paper:#faf7f2;--line:rgba(26,21,16,0.12);
+  --cv:#185FA5;--px:#d63b2f;--or:#c47a1a;
+  --sw:248px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;display:flex;min-height:100vh}
+
+/* SIDEBAR */
+#sb{width:var(--sw);min-height:100vh;background:var(--ink);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sb-brand{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-badge{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:7px}
+.sb-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900;color:#fff;line-height:1.3}
+.sb-title span{color:#f5c842}
+.sb-progress{margin:10px 0 0;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.sb-progress-fill{height:3px;background:#f5c842;border-radius:2px;transition:width .4s ease;width:0%}
+.sb-prog-txt{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:rgba(255,255,255,0.3);margin-top:5px}
+.sb-nav{padding:8px 0;flex:1}
+.sb-grp{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;color:rgba(255,255,255,0.2);text-transform:uppercase;padding:12px 20px 4px}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 20px;color:rgba(255,255,255,0.4);font-size:0.75rem;font-weight:600;border-left:3px solid transparent;cursor:pointer;transition:all .18s;user-select:none}
+.sb-link:hover{color:#fff;background:rgba(255,255,255,0.05);border-left-color:rgba(245,200,66,0.5)}
+.sb-link.on{color:#fff;background:rgba(245,200,66,0.1);border-left-color:#f5c842}
+.sb-link.done{color:rgba(255,255,255,0.6)}
+.sb-link.done::after{content:'✓';margin-left:auto;font-size:0.6rem;color:#f5c842}
+.sb-link .ico{font-size:0.85rem;width:16px;text-align:center;flex-shrink:0}
+.sb-foot{padding:12px 20px;border-top:1px solid rgba(255,255,255,0.07);font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:rgba(255,255,255,0.15);line-height:1.9}
+.module-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.48rem;padding:2px 7px;border-radius:3px;margin-left:auto;flex-shrink:0}
+.mb-cv{background:rgba(24,95,165,0.3);color:#85B7EB}
+.mb-px{background:rgba(214,59,47,0.3);color:#F09595}
+.mb-or{background:rgba(196,122,26,0.3);color:#FAC775}
+
+/* MAIN */
+#main{margin-left:var(--sw);flex:1}
+.sec{display:none;padding:44px 52px 80px;min-height:100vh;animation:fadeIn .28s ease}
+.sec.on{display:block}
+#s-home.on{display:flex;flex-direction:column;justify-content:center;min-height:100vh}
+@keyframes fadeIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+/* TYPOGRAPHY */
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.eyebrow.cv{color:var(--blue)}
+.eyebrow.or{color:var(--amber)}
+.sec-h{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.2vw,2.6rem);font-weight:900;line-height:1.12;margin-bottom:12px}
+.sec-lead{font-size:.9rem;color:var(--ink3);max-width:590px;line-height:1.88;margin-bottom:28px}
+.rule{border:none;border-top:2px solid var(--line);margin:26px 0}
+
+/* HOME */
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#f5c842;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;padding:6px 14px;border-radius:4px;margin-bottom:22px}
+.hero-big{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,5vw,4.4rem);font-weight:900;line-height:1.02;margin-bottom:16px}
+.hero-big em{font-style:italic;color:var(--red)}
+.hero-sub{font-size:.92rem;color:var(--ink3);line-height:1.88;max-width:520px;margin-bottom:28px}
+.module-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:680px;margin-bottom:32px}
+.mcard{border:2px solid var(--line);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;background:var(--paper)}
+.mcard:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,21,16,0.1)}
+.mcard.cv-c:hover{border-color:var(--blue)}
+.mcard.px-c:hover{border-color:var(--red)}
+.mcard.or-c:hover{border-color:var(--amber)}
+.mcard-icon{font-size:1.8rem;margin-bottom:10px}
+.mcard-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;margin-bottom:5px}
+.mcard-desc{font-size:0.75rem;color:var(--ink3);line-height:1.6}
+.mcard-count{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--ink3);margin-top:10px}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:640px}
+.stat-b{background:var(--cream2);border:1.5px solid var(--line);border-radius:10px;padding:16px}
+.stat-b .n{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900}
+.stat-b .l{font-size:0.7rem;color:var(--ink3);margin-top:3px}
+
+/* CARDS */
+.icard{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.icard h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;margin-bottom:8px}
+.icard p{font-size:.82rem;color:var(--ink3);line-height:1.72;margin-bottom:10px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.fbox{background:var(--ink);color:#a8e6cf;border-radius:8px;padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:0.67rem;line-height:1.82;white-space:pre;overflow-x:auto;margin-bottom:12px}
+.fbox.gold{color:#f5c842}
+.fbox.blue{color:#93c5fd}
+.fbox.coral{color:#ffb3b3}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;background:var(--cream2);border:1px solid var(--line);border-radius:4px;padding:2px 8px;color:var(--ink3)}
+.tag.red{background:#fde8e8;color:var(--red);border-color:rgba(214,59,47,.2)}
+.tag.green{background:#e8f5ed;color:var(--green);border-color:rgba(26,122,74,.2)}
+.tag.blue{background:#e8edf8;color:var(--blue);border-color:rgba(37,99,196,.2)}
+.tag.amber{background:#fef3e2;color:var(--amber);border-color:rgba(196,122,26,.2)}
+
+/* INFO BOXES */
+.info{display:flex;gap:12px;padding:11px 15px;border-radius:0;border-left:3px solid;margin:0.75rem 0;align-items:flex-start;font-size:.82rem;line-height:1.55}
+.info span{flex-shrink:0;font-size:15px}
+.info p{color:var(--ink3)}
+.info strong{color:var(--ink);font-weight:600}
+.ib{background:#E6F1FB;border-color:#185FA5}
+.ig{background:#e8f5ed;border-color:#1a7a4a}
+.ia{background:#fef3e2;border-color:#c47a1a}
+.ic{background:#fde8e8;border-color:#d63b2f}
+.ip{background:#EEEDFE;border-color:#534AB7}
+
+/* CODE */
+.codebox{background:#0f1117;border-radius:10px;padding:1.25rem 1.5rem;margin:1rem 0;overflow-x:auto;border:0.5px solid rgba(255,255,255,0.06)}
+.codebox pre{font-family:'IBM Plex Mono',monospace;font-size:.75rem;line-height:1.82;color:#e2e8f0}
+.kw{color:#7dd3fc}.fn{color:#a78bfa}.str{color:#86efac}.cm{color:#4b5563;font-style:italic}.num{color:#fbbf24}
+
+/* SLIDERS & CONTROLS */
+.srow{display:flex;align-items:center;gap:12px;margin:0.6rem 0}
+.srow label{font-size:.82rem;color:var(--ink3);min-width:90px;font-weight:500}
+.srow input[type=range]{flex:1}
+.srow .val{font-family:'IBM Plex Mono',monospace;font-size:.8rem;font-weight:500;min-width:36px;color:var(--ink);text-align:right}
+input[type=range]{-webkit-appearance:none;height:4px;border-radius:4px;background:var(--cream3);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--ink);cursor:pointer;transition:transform .1s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+
+/* BUTTONS */
+.zbtn{padding:6px 13px;border:1.5px solid var(--line);background:transparent;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--ink3);cursor:pointer;transition:all .15s}
+.zbtn:hover{border-color:var(--ink);color:var(--ink);background:var(--cream2)}
+.zbtn.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.ctrl-btn{background:var(--paper);border:1.5px solid var(--line);color:var(--ink2);padding:8px 16px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.76rem;font-weight:700;cursor:pointer;transition:all .15s}
+.ctrl-btn:hover{background:var(--ink);color:#f5c842;border-color:var(--ink)}
+.ctrl-btn:disabled{opacity:.35;cursor:default}
+.tbtn{padding:7px 14px;border:1.5px solid var(--line);background:var(--paper);border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif}
+.tbtn:hover{border-color:var(--ink)}
+.tbtn.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.tab-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+.ask-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:var(--cream2);color:var(--ink);transition:all .15s;text-decoration:none}
+.ask-btn:hover{background:var(--ink);color:#f5c842;border-color:var(--ink)}
+.ask-btn .ico{width:18px;height:18px;border-radius:4px;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+
+/* PIXEL SPECIFIC */
+.rgb-mixer{display:flex;flex-direction:column;gap:0}
+.color-swatch{border-radius:10px;padding:22px;font-family:'IBM Plex Mono',monospace;font-size:.78rem;font-weight:500;margin-bottom:14px;text-align:center;transition:all .2s}
+.sl-row{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:.78rem}
+.sl-row label{width:18px;font-weight:700;flex-shrink:0}
+.sl-row.r label{color:var(--red)}
+.sl-row.g label{color:var(--green)}
+.sl-row.b label{color:var(--blue)}
+.sl-row input{flex:1}
+.sl-row span{font-family:'IBM Plex Mono',monospace;font-size:.72rem;min-width:26px;text-align:right}
+.big-pixel{width:90px;height:90px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-align:center;flex-shrink:0;transition:background .2s}
+
+/* PIXEL GRID */
+.pgrid{display:grid;gap:3px;width:fit-content;margin:10px 0}
+.pgrid div{width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.55rem;cursor:pointer;transition:all .2s}
+.pcell{width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:.65rem}
+
+/* PIPELINE */
+.pipe{display:flex;align-items:center;gap:6px;margin:1rem 0;flex-wrap:wrap}
+.pstep{padding:9px 12px;border-radius:8px;font-size:.78rem;font-weight:600;text-align:center;flex:1;min-width:80px;line-height:1.3}
+.parr{color:var(--ink3);font-size:18px;flex-shrink:0}
+
+/* STEP CARDS (CV Action Plan style) */
+.step-phase{display:flex;align-items:center;gap:8px;margin:1.2rem 0 .6rem}
+.step-phase-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.step-phase-lbl{font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.step-phase-line{flex:1;height:.5px;background:var(--line)}
+.step-card{background:var(--paper);border:1.5px solid var(--line);border-radius:13px;margin-bottom:8px;overflow:hidden;transition:border-color .2s,transform .15s;cursor:pointer}
+.step-card:hover{border-color:var(--ink2);transform:translateX(3px)}
+.step-card.open{border-color:var(--ink)}
+.step-head{display:flex;align-items:center;gap:11px;padding:13px 16px;user-select:none}
+.step-num{font-family:'IBM Plex Mono',monospace;font-size:.65rem;font-weight:500;color:var(--ink3);background:var(--cream2);border-radius:5px;padding:3px 7px;min-width:28px;text-align:center}
+.step-title{font-size:.9rem;font-weight:600;flex:1;color:var(--ink)}
+.step-badge{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--ink3);padding:3px 9px;border-radius:20px;background:var(--cream2);border:1px solid var(--line);white-space:nowrap}
+.step-chev{font-size:.65rem;color:var(--ink3);transition:transform .25s;margin-left:2px}
+.step-body{display:none;border-top:1px solid var(--line)}
+.step-body.open{display:block}
+.step-inner{padding:14px 16px 16px}
+.step-tabs{display:flex;gap:6px;margin-bottom:12px}
+.step-tab{flex:1;padding:7px 0;border:1px solid var(--line);border-radius:7px;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:600;color:var(--ink3);cursor:pointer;transition:all .15s}
+.step-tab.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.step-pane{display:none}.step-pane.on{display:block}
+
+/* DEMO CANVAS */
+.demo-wrap{background:var(--cream2);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.insight-box{font-size:.79rem;color:var(--ink3);line-height:1.6;border-left:3px solid var(--blue);padding-left:10px;margin-top:8px}
+.insight-box.red{border-color:var(--red)}
+.insight-box.green{border-color:var(--green)}
+.outcomes{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.outcome-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:.72rem;font-weight:600;background:#e8edf8;color:var(--blue)}
+.outcome-pill::before{content:'✓';width:14px;height:14px;border-radius:50%;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0}
+
+/* RECONSTRUCTION ANIMATION */
+.recon-grid{display:grid;gap:1px;margin:10px auto;width:fit-content}
+.recon-cell{transition:all .15s}
+
+/* ORANGE */
+.or-card{background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+.or-workflow{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:12px 0}
+.or-widget{padding:8px 12px;border-radius:7px;font-size:.75rem;font-weight:600;border:1.5px solid;text-align:center}
+.or-arrow{color:var(--ink3);font-size:14px;flex-shrink:0}
+
+/* QUIZ */
+.quiz-wrap{max-width:540px}
+.q-txt{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:18px;line-height:1.4}
+.q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.q-opt{padding:11px 16px;border:1.5px solid var(--line);border-radius:9px;background:var(--paper);font-size:.84rem;cursor:pointer;transition:all .18s;text-align:left;font-family:'Plus Jakarta Sans',sans-serif}
+.q-opt:hover{border-color:var(--ink);background:var(--cream2)}
+.q-opt.ok{background:#d4f5e2;border-color:var(--green);color:var(--green)}
+.q-opt.no{background:#fde8e8;border-color:var(--red);color:var(--red)}
+.q-opt:disabled{cursor:default}
+.q-fb{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.8rem;line-height:1.65;display:none}
+.q-fb.show{display:block}
+.q-fb.g{background:#d4f5e2;color:var(--green)}
+.q-fb.b{background:#fde8e8;color:var(--red)}
+.q-nxt{margin-top:12px;background:var(--ink);color:var(--cream);border:none;border-radius:7px;padding:9px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;display:none;transition:transform .13s}
+.q-nxt:hover{transform:translateY(-2px)}
+.q-sc{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:36px 24px;text-align:center;display:none;max-width:380px}
+.q-sc .big{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900}
+.q-rs{background:var(--ink);color:var(--cream);border:none;border-radius:7px;padding:9px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;cursor:pointer;transition:transform .13s}
+.q-rs:hover{transform:translateY(-2px)}
+
+/* HTABLE */
+.htable{width:100%;border-collapse:collapse;font-size:.82rem;margin:1rem 0}
+.htable th{background:var(--cream2);padding:10px 13px;text-align:left;font-weight:600;font-size:.72rem;color:var(--ink3);border-bottom:1px solid var(--line)}
+.htable td{padding:10px 13px;border-bottom:1px solid var(--line)}
+.htable tr:last-child td{border-bottom:none}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
+
+/* PIXEL STEPS */
+.hstep{display:flex;gap:13px;padding:13px;border-radius:10px;border:1px solid var(--line);margin:7px 0;align-items:flex-start;background:var(--paper)}
+.hicon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700;font-family:'Playfair Display',serif}
+.htext h4{font-size:.85rem;font-weight:700;margin-bottom:3px}
+.htext p{font-size:.78rem;color:var(--ink3);line-height:1.55}
+
+/* CANVAS stuff */
+.cam-wrap{background:#111;border-radius:12px;padding:1rem;display:flex;flex-direction:column;align-items:center;gap:10px;margin:1rem 0}
+.cam-screen{width:100%;max-width:380px;height:200px;background:#000;border-radius:8px;position:relative;overflow:hidden}
+.cam-lbl{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:#4ade80;background:rgba(0,0,0,0.7);padding:3px 9px;border-radius:4px;position:absolute;top:8px;left:8px}
+
+/* MATH */
+.math{background:#EEEDFE;border:.5px solid #AFA9EC;border-radius:10px;padding:.9rem 1.1rem;margin:.6rem 0;font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:#3C3489;line-height:1.8}
+
+/* HAM */
+.ham{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--ink);border:none;border-radius:7px;width:38px;height:38px;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.ham span{width:16px;height:2px;background:var(--cream);border-radius:1px;display:block}
+
+/* VBOX */
+.vbox{border-radius:10px;padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100px;text-align:center;border:.5px solid var(--line)}
+.vbox-icon{font-size:24px;margin-bottom:7px}
+.vbox-lbl{font-size:.82rem;font-weight:700;margin-bottom:3px}
+.vbox-desc{font-size:.72rem;color:var(--ink3);line-height:1.4}
+
+/* GRADIENT BAR */
+#gvis{display:flex;gap:4px;margin:1rem 0;align-items:flex-end;justify-content:center}
+.gcell{flex:1;min-width:24px;height:60px;border-radius:5px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:500}
+
+/* TPANE / tabs for image types */
+.tpane{display:none;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.tpane.on{display:grid}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  :root{--sw:0px}
+  #sb{transform:translateX(-248px);transition:transform .25s;width:248px}
+  #sb.open{transform:translateX(0)}
+  #main{margin-left:0}
+  .ham{display:flex!important}
+  .sec{padding:28px 18px 56px}
+  .two-col,.three-col,.module-cards,.tpane.on{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<button class="ham" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+
+<nav id="sb">
+  <div class="sb-brand">
+    <div class="sb-badge">Class XII · AI 843 · Complete Lab</div>
+    <div class="sb-title">Making<br>Machines<br><span>See</span></div>
+    <div class="sb-progress"><div class="sb-progress-fill" id="sbpf"></div></div>
+    <div class="sb-prog-txt" id="sbpt">0 of 18 topics explored</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Start Here</div>
+    <a class="sb-link on" data-s="s-home"><span class="ico">🏠</span>Home</a>
+
+    <div class="sb-grp">Module 1 — Pixels & Images</div>
+    <a class="sb-link" data-s="s-pixel"><span class="ico">🔴</span>What is a Pixel?<span class="module-badge mb-px">PIXEL</span></a>
+    <a class="sb-link" data-s="s-types"><span class="ico">🖤</span>Image Types<span class="module-badge mb-px">PIXEL</span></a>
+    <a class="sb-link" data-s="s-grid"><span class="ico">🔲</span>Image as a Grid<span class="module-badge mb-px">PIXEL</span></a>
+    <a class="sb-link" data-s="s-matrix"><span class="ico">📊</span>Pixel Matrix<span class="module-badge mb-px">PIXEL</span></a>
+    <a class="sb-link" data-s="s-channels"><span class="ico">🌈</span>Colour Channels<span class="module-badge mb-px">PIXEL</span></a>
+    <a class="sb-link" data-s="s-recon"><span class="ico">▶️</span>Reconstruction<span class="module-badge mb-px">PIXEL</span></a>
+
+    <div class="sb-grp">Module 2 — Computer Vision</div>
+    <a class="sb-link" data-s="s-cv1"><span class="ico">📷</span>Capture Frames<span class="module-badge mb-cv">CV</span></a>
+    <a class="sb-link" data-s="s-cv2"><span class="ico">⬛</span>Grayscale<span class="module-badge mb-cv">CV</span></a>
+    <a class="sb-link" data-s="s-cv3"><span class="ico">🔲</span>Pixel Arrays<span class="module-badge mb-cv">CV</span></a>
+    <a class="sb-link" data-s="s-cv4"><span class="ico">📐</span>Edge Detection<span class="module-badge mb-cv">CV</span></a>
+    <a class="sb-link" data-s="s-cv5"><span class="ico">🧠</span>Face Detection<span class="module-badge mb-cv">CV</span></a>
+    <a class="sb-link" data-s="s-cv6"><span class="ico">🤖</span>Deep Learning<span class="module-badge mb-cv">CV</span></a>
+
+    <div class="sb-grp">Module 3 — Orange Data Mining</div>
+    <a class="sb-link" data-s="s-or1"><span class="ico">📂</span>Load Data<span class="module-badge mb-or">OR</span></a>
+    <a class="sb-link" data-s="s-or2"><span class="ico">📈</span>Visualise<span class="module-badge mb-or">OR</span></a>
+    <a class="sb-link" data-s="s-or3"><span class="ico">🌳</span>Train Classifier<span class="module-badge mb-or">OR</span></a>
+    <a class="sb-link" data-s="s-or4"><span class="ico">⚖️</span>Compare Models<span class="module-badge mb-or">OR</span></a>
+
+    <div class="sb-grp">Review</div>
+    <a class="sb-link" data-s="s-quiz"><span class="ico">✏️</span>Quick Quiz</a>
+  </div>
+  <div class="sb-foot">Interactive Lab · All modules in one file<br>Open "Ask Claude" buttons for deep dives</div>
+</nav>
+
+<main id="main">
+
+<!-- ══ HOME ══ -->
+<section class="sec on" id="s-home">
+  <div class="hero-kicker">🖥 Complete Interactive Guide · 18 Topics · 3 Modules</div>
+  <h1 class="hero-big">Making machines<br><em>see, think,</em><br>and understand.</h1>
+  <p class="hero-sub">From a single pixel's three numbers to real-time face detection and machine learning classifiers — every concept is interactive. Pick a module and learn it fully, with animations, live code examples, and instant Claude support.</p>
+  <div class="module-cards">
+    <div class="mcard px-c" onclick="go('s-pixel')">
+      <div class="mcard-icon">🔴</div>
+      <div class="mcard-title" style="color:var(--red)">Pixels &amp; Images</div>
+      <div class="mcard-desc">What is a pixel? RGB values, pixel matrices, image types, channels, and how images are stored and reconstructed from pure numbers.</div>
+      <div class="mcard-count">6 interactive topics</div>
+    </div>
+    <div class="mcard cv-c" onclick="go('s-cv1')">
+      <div class="mcard-icon">📷</div>
+      <div class="mcard-title" style="color:var(--blue)">Computer Vision</div>
+      <div class="mcard-desc">Video capture, grayscale, pixel arrays, edge detection with Canny, face detection with Haar cascades, and deep learning with MobileNetV2.</div>
+      <div class="mcard-count">6 interactive topics</div>
+    </div>
+    <div class="mcard or-c" onclick="go('s-or1')">
+      <div class="mcard-icon">🍊</div>
+      <div class="mcard-title" style="color:var(--amber)">Orange Data Mining</div>
+      <div class="mcard-desc">Drag-and-drop ML workflows: load datasets, visualise distributions, train Decision Trees and Random Forests, compare model accuracy.</div>
+      <div class="mcard-count">4 interactive topics</div>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-b"><div class="n">18</div><div class="l">Interactive topics</div></div>
+    <div class="stat-b"><div class="n">16M+</div><div class="l">RGB colour combos</div></div>
+    <div class="stat-b"><div class="n">3</div><div class="l">Complete modules</div></div>
+    <div class="stat-b"><div class="n">∞</div><div class="l">Ask Claude anything</div></div>
+  </div>
+</section>
+
+<!-- ══ PIXEL 1: WHAT IS A PIXEL ══ -->
+<section class="sec" id="s-pixel">
+  <div class="eyebrow">Module 1 · Concept 01</div>
+  <h2 class="sec-h">What Exactly Is a Pixel?</h2>
+  <p class="sec-lead">A pixel (picture element) is the <strong>smallest unit of a digital image</strong> — a tiny coloured square storing exactly three numbers: <span style="color:var(--red);font-weight:700">Red</span>, <span style="color:var(--green);font-weight:700">Green</span>, <span style="color:var(--blue);font-weight:700">Blue</span>, each from 0 to 255. Drag the sliders and see what colour you mix.</p>
+  <div class="two-col" style="margin-bottom:24px">
+    <div>
+      <div class="color-swatch" id="cprev" style="background:rgb(210,80,120);color:#fff">(210, 80, 120)</div>
+      <div class="rgb-mixer">
+        <div class="sl-row r"><label>R</label><input type="range" id="sr" min="0" max="255" value="210" oninput="upPx()"><span id="vr">210</span></div>
+        <div class="sl-row g"><label>G</label><input type="range" id="sg" min="0" max="255" value="80" oninput="upPx()"><span id="vg">80</span></div>
+        <div class="sl-row b"><label>B</label><input type="range" id="sb2" min="0" max="255" value="120" oninput="upPx()"><span id="vb">120</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px;margin-top:14px">
+        <div class="big-pixel" id="bigpx" style="background:rgb(210,80,120);color:#fff"><div id="bigpx-lbl" style="line-height:1.9;font-size:.6rem">(210,80,120)<br>R=210 G=80<br>B=120</div></div>
+        <p style="font-size:.76rem;color:var(--ink3);line-height:1.85">← This is ONE pixel.<br>Three numbers.<br>That's all a pixel is.</p>
+      </div>
+    </div>
+    <div>
+      <div class="icard">
+        <h3>Colour mixing rules</h3>
+        <div class="fbox gold">R=255, G=0,   B=0   → 🔴 Red
+R=0,   G=255, B=0   → 🟢 Green
+R=0,   G=0,   B=255 → 🔵 Blue
+R=255, G=255, B=0   → 🟡 Yellow
+R=255, G=255, B=255 → ⬜ White
+R=0,   G=0,   B=0   → ⬛ Black</div>
+      </div>
+      <div class="icard">
+        <h3>Memory cost</h3>
+        <div class="fbox">1 channel  →  1 byte (0–255)
+1 pixel    →  3 bytes (RGB)
+1 MP image →  ~3 MB (raw)
+12 MP phone →  ~36 MB (raw)</div>
+      </div>
+    </div>
+  </div>
+  <div class="info ib"><span>💡</span><p><strong>Key insight:</strong> 256 × 256 × 256 = <strong>16,777,216</strong> possible colours from just three numbers. Pixels are not pictures — they are instructions.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=Explain%20how%20RGB%20pixel%20values%20work%20and%20why%20we%20use%200-255" target="_blank"><span class="ico">↗</span> Ask Claude: Why 0–255?</a>
+</section>
+
+<!-- ══ PIXEL 2: IMAGE TYPES ══ -->
+<section class="sec" id="s-types">
+  <div class="eyebrow">Module 1 · Concept 02</div>
+  <h2 class="sec-h">Three Types of Digital Images</h2>
+  <p class="sec-lead">Not all images use RGB. Each type stores pixels differently — and each exists because specific applications need exactly that format.</p>
+  <div class="tab-row">
+    <button class="tbtn on" onclick="showType('bin',this)">⬛ Binary</button>
+    <button class="tbtn" onclick="showType('gray',this)">🌑 Grayscale</button>
+    <button class="tbtn" onclick="showType('rgb',this)">🌈 RGB Colour</button>
+  </div>
+  <div id="type-bin" class="tpane on">
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px;color:var(--ink3)">8×8 binary image — click cells to toggle</div>
+      <div id="bin-grid" class="pgrid" style="grid-template-columns:repeat(8,28px)"></div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--ink3);margin-top:8px">Values: 0 = ⬛ Black · 1 = ⬜ White</p>
+    </div>
+    <div class="icard">
+      <h3>Binary Image — 1 bit per pixel</h3>
+      <p>Each pixel is either 0 (black) or 1 (white). Fastest to process, smallest file size. Used where colour is irrelevant.</p>
+      <div class="fbox">Pixel ∈ {0, 1}
+Bits per pixel: 1
+Memory (8×8):  8 bytes
+
+Use cases:
+  • OCR document scanning
+  • Barcode / QR reading
+  • Edge detection output
+  • Fingerprint matching</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="tag">1 bit per pixel</span><span class="tag green">Smallest file</span><span class="tag">Fastest processing</span></div>
+    </div>
+  </div>
+  <div id="type-gray" class="tpane">
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px;color:var(--ink3)">8×8 grayscale — hover to see brightness</div>
+      <div id="gray-grid" class="pgrid" style="grid-template-columns:repeat(8,28px)"></div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--ink3);margin-top:8px">Values: 0 = Black → 255 = White</p>
+    </div>
+    <div class="icard">
+      <h3>Grayscale — 8 bits per pixel</h3>
+      <p>Each pixel is a single brightness value 0–255. No colour, just luminance. 3× smaller than RGB.</p>
+      <div class="fbox">Pixel ∈ {0 ... 255}
+Bytes per pixel: 1
+Array shape: [H, W]
+
+vs RGB: 3× smaller!
+Use cases:
+  • X-ray / MRI scans
+  • Face detection
+  • Thermal satellite imaging</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="tag">8 bits per pixel</span><span class="tag blue">Medical imaging</span></div>
+    </div>
+  </div>
+  <div id="type-rgb" class="tpane">
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px;color:var(--ink3)">6×6 RGB grid — click to randomise</div>
+      <div id="rgb-grid" class="pgrid" style="grid-template-columns:repeat(6,28px)"></div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--ink3);margin-top:8px">Each cell = [R, G, B] — three bytes</p>
+    </div>
+    <div class="icard">
+      <h3>RGB Colour — 24 bits per pixel</h3>
+      <p>Three channels (Red, Green, Blue), each 0–255. 16,777,216 possible colours per pixel.</p>
+      <div class="fbox">Pixel = [R, G, B]
+Bytes per pixel: 3
+Array shape: [H, W, 3]
+
+16,777,216 colours
+Use cases:
+  • Photography
+  • Video / streaming
+  • Computer vision input</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="tag">24 bits per pixel</span><span class="tag red">Largest memory</span><span class="tag amber">16M colours</span></div>
+    </div>
+  </div>
+  <a class="ask-btn" href="https://claude.ai/new?q=Why%20do%20medical%20images%20use%20grayscale%20instead%20of%20colour?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Why grayscale in medicine?</a>
+</section>
+
+<!-- ══ PIXEL 3: GRID ══ -->
+<section class="sec" id="s-grid">
+  <div class="eyebrow">Module 1 · Concept 03</div>
+  <h2 class="sec-h">An Image Is a Grid of Pixels</h2>
+  <p class="sec-lead">Zoom into any digital photo and you will see individual coloured squares. An image is simply a rectangular grid — more squares means more detail. Less squares means blockier, blurrier pictures.</p>
+  <div class="icard">
+    <h3>Resolution demonstration — drag the slider</h3>
+    <p>See how resolution affects image quality. Same information, different grid sizes.</p>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="tbtn on" onclick="setRes(4,this)">4×4</button>
+      <button class="tbtn" onclick="setRes(8,this)">8×8</button>
+      <button class="tbtn" onclick="setRes(16,this)">16×16</button>
+      <button class="tbtn" onclick="setRes(32,this)">32×32</button>
+      <button class="tbtn" onclick="setRes(64,this)">64×64</button>
+    </div>
+    <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+      <div>
+        <div id="res-grid" style="border:1px solid var(--line);display:inline-block;margin-bottom:8px"></div>
+        <div id="res-info" style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--ink3)"></div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div class="fbox gold" id="res-code">Resolution:  4 × 4 = 16 pixels
+Memory:      16 × 3 = 48 bytes
+Detail:      Very low (pixelated)</div>
+        <div class="info ia"><span>📐</span><p>More pixels = more detail but larger file size. A 4K video frame (3840×2160) contains 8,294,400 pixels — each needing 3 bytes = 24 MB per single frame.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="info ib"><span>🎯</span><p><strong>Real numbers:</strong> A 12 megapixel smartphone photo has 12,000,000 pixels. At 3 bytes each that is <strong>36 MB raw</strong> before any compression. JPEG reduces this to ~3–5 MB by removing detail the eye cannot see.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20does%20JPEG%20compression%20reduce%20image%20file%20size%20without%20losing%20quality?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: How does JPEG compression work?</a>
+</section>
+
+<!-- ══ PIXEL 4: MATRIX ══ -->
+<section class="sec" id="s-matrix">
+  <div class="eyebrow">Module 1 · Concept 04</div>
+  <h2 class="sec-h">The Pixel Matrix — Images Are Arrays</h2>
+  <p class="sec-lead">Every image is stored as a 2D (or 3D) array of numbers. In Python and OpenCV, this is a NumPy array. Understanding this is the key that unlocks all of computer vision.</p>
+  <div class="two-col">
+    <div>
+      <div class="icard">
+        <h3>A 6×6 pixel grid — this IS an image</h3>
+        <p>Each cell is a brightness value (0 = black, 255 = white). Numbers form shapes.</p>
+        <div id="pgrid" style="margin:10px 0"></div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="tbtn on" onclick="sg('letter',this)">Letter A</button>
+          <button class="tbtn" onclick="sg('gradient',this)">Gradient</button>
+          <button class="tbtn" onclick="sg('edge',this)">Edge</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="codebox"><pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> cv2
+
+<span class="cm"># An image is just a NumPy array</span>
+blank = np.<span class="fn">zeros</span>((<span class="num">300</span>, <span class="num">300</span>, <span class="num">3</span>), dtype=np.uint8)
+
+<span class="cm"># Read a single pixel's BGR values</span>
+pixel = frame[<span class="num">100</span>, <span class="num">150</span>]   <span class="cm"># row, column</span>
+<span class="fn">print</span>(<span class="str">"BGR:"</span>, pixel)   <span class="cm"># [120, 45, 200]</span>
+
+<span class="cm"># Shape tells you dimensions</span>
+<span class="fn">print</span>(frame.shape)  <span class="cm"># (480, 640, 3)</span>
+<span class="cm">#                     H    W   channels</span>
+
+<span class="cm"># Crop a region (Region of Interest)</span>
+roi = frame[<span class="num">50</span>:<span class="num">200</span>, <span class="num">80</span>:<span class="num">300</span>]</pre></div>
+      <div class="icard" style="background:var(--cream2)">
+        <h3>Array shapes by image type</h3>
+        <div class="fbox">Binary:    [H, W]      → 2D, 1 value
+Grayscale: [H, W]      → 2D, 1 value
+Colour:    [H, W, 3]   → 3D, 3 values
+
+Example 640×480 image:
+  Grayscale: 307,200 values
+  Colour:    921,600 values (3×)</div>
+      </div>
+    </div>
+  </div>
+  <div class="info ip"><span>📚</span><p><strong>Class 12 — NumPy:</strong> <code>frame.shape</code> returns <code>(height, width, channels)</code>. You can slice: <code>frame[y1:y2, x1:x2]</code> crops a Region of Interest. Brighten = <code>frame + 50</code>. Flip = <code>np.flip(frame, axis=1)</code>. Images are just maths on arrays.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20do%20NumPy%20array%20operations%20apply%20to%20image%20processing%20in%20OpenCV?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: NumPy image operations</a>
+</section>
+
+<!-- ══ PIXEL 5: CHANNELS ══ -->
+<section class="sec" id="s-channels">
+  <div class="eyebrow">Module 1 · Concept 05</div>
+  <h2 class="sec-h">Colour Channels — Splitting an Image</h2>
+  <p class="sec-lead">A colour image is three grayscale images stacked together. Split the channels apart and you can see exactly how much red, green, and blue is in every part of the picture.</p>
+  <div class="icard">
+    <h3>Interactive channel mixer</h3>
+    <p>Drag each channel to zero and observe what disappears from the scene.</p>
+    <div class="srow"><label style="color:var(--red);font-weight:700">Red ch.</label><input type="range" min="0" max="255" value="200" id="chR" oninput="upCh()"><span class="val" id="cvR">200</span></div>
+    <div class="srow"><label style="color:var(--green);font-weight:700">Green ch.</label><input type="range" min="0" max="255" value="120" id="chG" oninput="upCh()"><span class="val" id="cvG">120</span></div>
+    <div class="srow"><label style="color:var(--blue);font-weight:700">Blue ch.</label><input type="range" min="0" max="255" value="60" id="chB" oninput="upCh()"><span class="val" id="cvB">60</span></div>
+    <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Red only</div><div id="ch-r" style="width:70px;height:70px;border-radius:8px"></div></div>
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Green only</div><div id="ch-g" style="width:70px;height:70px;border-radius:8px"></div></div>
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Blue only</div><div id="ch-b" style="width:70px;height:70px;border-radius:8px"></div></div>
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:5px">Combined RGB</div><div id="ch-all" style="width:70px;height:70px;border-radius:8px"></div></div>
+    </div>
+  </div>
+  <div class="codebox"><pre><span class="cm"># Split a colour image into its 3 channels</span>
+b_ch, g_ch, r_ch = cv2.<span class="fn">split</span>(img)
+<span class="cm"># Each is a grayscale image (brightness = that channel's value)</span>
+
+<span class="cm"># Recombine channels</span>
+merged = cv2.<span class="fn">merge</span>([b_ch, g_ch, r_ch])
+
+<span class="cm"># Show just the red channel as a grayscale image</span>
+cv2.<span class="fn">imshow</span>(<span class="str">'Red Channel'</span>, r_ch)
+
+<span class="cm"># OpenCV uses BGR! Convert to RGB for matplotlib</span>
+rgb = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2RGB)
+plt.<span class="fn">imshow</span>(rgb)</pre></div>
+  <div class="info ia"><span>⚠️</span><p><strong>OpenCV stores BGR, not RGB!</strong> When you load an image with <code>cv2.imread()</code>, the channel order is Blue-Green-Red. This is the #1 mistake beginners make — red and blue appear swapped. Always convert with <code>cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</code> before displaying with matplotlib.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=Why%20does%20OpenCV%20use%20BGR%20instead%20of%20RGB%20and%20how%20do%20I%20convert?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: BGR vs RGB explained</a>
+</section>
+
+<!-- ══ PIXEL 6: RECONSTRUCTION ══ -->
+<section class="sec" id="s-recon">
+  <div class="eyebrow">Module 1 · Concept 06</div>
+  <h2 class="sec-h">Image Reconstruction — Pixels → Picture</h2>
+  <p class="sec-lead">Every image is reconstructed the same way: read the matrix row by row, paint each pixel its stored colour. This animation shows the process live — watch numbers become a picture.</p>
+  <div class="icard">
+    <h3>Live reconstruction animation</h3>
+    <p>A 24×24 pixel face is reconstructed from its numeric matrix. Watch it build pixel by pixel.</p>
+    <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+      <div>
+        <canvas id="reconCanvas" width="240" height="240" style="border-radius:6px;border:1px solid var(--line);display:block"></canvas>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="ctrl-btn" onclick="startRecon()">▶ Reconstruct</button>
+          <button class="ctrl-btn" onclick="resetRecon()">↺ Reset</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:180px">
+        <div class="fbox gold" id="recon-info">Status: Click ▶ to begin
+Row:    0 / 24
+Col:    0 / 24
+Pixels: 0 / 576</div>
+        <div class="info ig" style="margin-top:10px"><span>🔁</span><p>Same pixel data always = same image. The matrix <em>is</em> the image. Reading it back reproduces the picture perfectly every time.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="codebox"><pre><span class="cm"># Load image and access its data</span>
+img = cv2.<span class="fn">imread</span>(<span class="str">'photo.jpg'</span>)
+<span class="fn">print</span>(img.shape)  <span class="cm"># (H, W, 3) — the matrix dimensions</span>
+
+<span class="cm"># Read row by row — this IS reconstruction</span>
+<span class="kw">for</span> row <span class="kw">in</span> <span class="fn">range</span>(img.shape[<span class="num">0</span>]):           <span class="cm"># each row</span>
+    <span class="kw">for</span> col <span class="kw">in</span> <span class="fn">range</span>(img.shape[<span class="num">1</span>]):       <span class="cm"># each column</span>
+        b, g, r = img[row, col]           <span class="cm"># read pixel</span>
+        <span class="cm"># paint pixel (r, g, b) at position (col, row)</span>
+
+<span class="cm"># Save reconstructed image</span>
+cv2.<span class="fn">imwrite</span>(<span class="str">'reconstructed.jpg'</span>, img)
+<span class="cm"># Same pixel data = identical image every time</span></pre></div>
+  <div class="info ib"><span>💡</span><p><strong>Key takeaway:</strong> Pixels → Numbers → Matrix → Numbers → Pixels. The matrix IS the image. Digital images are not "pictures" stored somewhere — they are instructions: <em>"paint pixel at position (x,y) with colour (R,G,B)"</em>, repeated millions of times.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20is%20a%20digital%20image%20stored%20in%20computer%20memory%20as%20a%20matrix?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: How images are stored in memory</a>
+</section>
+
+<!-- ══ CV 1: CAPTURE ══ -->
+<section class="sec" id="s-cv1">
+  <div class="eyebrow cv">Module 2 · Concept 01</div>
+  <h2 class="sec-h">Digital Eyes: Capturing the Frame Stream</h2>
+  <p class="sec-lead">Video is not a continuous stream — it is many still photographs shown very fast (24–60 per second). Each captured still is called a <strong>frame</strong>. Our <code>while</code> loop grabs one frame at a time.</p>
+  <div class="info ib"><span>🎯</span><p><strong>Key concept:</strong> <code>cap.read()</code> captures ONE frame — like pressing the shutter button on a camera. We call it thousands of times per minute inside a loop. Each frame is a NumPy array ready for processing.</p></div>
+  <div class="codebox"><pre><span class="kw">import</span> cv2
+
+<span class="cm"># Connect to webcam (0 = built-in, 1 = external)</span>
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="cm"># Grab one frame — like one photograph</span>
+    ret, frame = cap.<span class="fn">read</span>()
+
+    <span class="kw">if not</span> ret:           <span class="cm"># camera failed?</span>
+        <span class="kw">break</span>
+
+    <span class="cm"># Show the frame in a window</span>
+    cv2.<span class="fn">imshow</span>(<span class="str">'Live Stream'</span>, frame)
+
+    <span class="cm"># 1ms wait — press Q to quit</span>
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) & <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>):
+        <span class="kw">break</span>
+
+cap.<span class="fn">release</span>()          <span class="cm"># free the camera</span>
+cv2.<span class="fn">destroyAllWindows</span>()</pre></div>
+
+  <div class="icard" style="background:var(--cream2)">
+    <h3>Line-by-line explanation</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:10px;align-items:flex-start;font-size:.8rem"><span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;background:var(--paper);padding:2px 8px;border-radius:4px;flex-shrink:0;border:1px solid var(--line)">VideoCapture(0)</span><span style="color:var(--ink3)">Connects to camera index 0. Try index 1 if two cameras exist.</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;font-size:.8rem"><span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;background:var(--paper);padding:2px 8px;border-radius:4px;flex-shrink:0;border:1px solid var(--line)">cap.read()</span><span style="color:var(--ink3)">Returns <code>ret</code> (did it work?) and <code>frame</code> (image as grid of numbers).</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;font-size:.8rem"><span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;background:var(--paper);padding:2px 8px;border-radius:4px;flex-shrink:0;border:1px solid var(--line)">waitKey(1)</span><span style="color:var(--ink3)">Without this the window freezes. Gives OS 1ms to refresh display and listens for keys.</span></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;font-size:.8rem"><span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;background:var(--paper);padding:2px 8px;border-radius:4px;flex-shrink:0;border:1px solid var(--line)">cap.release()</span><span style="color:var(--ink3)">Frees the camera so other apps can use it. Always include this — like hanging up the phone.</span></div>
+    </div>
+  </div>
+
+  <div class="cam-wrap">
+    <div class="cam-screen"><canvas id="c1" width="380" height="200"></canvas><div class="cam-lbl" id="l1">● FRAME 000</div></div>
+    <p style="font-size:.72rem;color:#888;text-align:center">Webcam frame stream simulation</p>
+    <button class="ctrl-btn" id="b1" onclick="tog1()" style="background:var(--paper);color:var(--ink)">▶ Run simulation</button>
+  </div>
+  <div class="info ig"><span>✅</span><p><strong>Expected output:</strong> A window opens showing your webcam feed. The frame counter increases ~30× per second. Press Q to close cleanly.</p></div>
+  <div class="info ic"><span>🔴</span><p><strong>Common error:</strong> If nothing opens, try <code>VideoCapture(1)</code>. If that fails, check that no other app (Zoom, Teams) is using the camera.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20does%20OpenCV%20VideoCapture%20work%20and%20what%20is%20a%20frame%20in%20video%20processing?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: How does VideoCapture work?</a>
+</section>
+
+<!-- ══ CV 2: GRAYSCALE ══ -->
+<section class="sec" id="s-cv2">
+  <div class="eyebrow cv">Module 2 · Concept 02</div>
+  <h2 class="sec-h">Simplification: The Grayscale Shift</h2>
+  <p class="sec-lead">Colour is expensive. Each colour pixel is THREE numbers. Converting to grayscale reduces data by 66%, making every algorithm roughly 3× faster — with almost no loss in useful information for most CV tasks.</p>
+  <div class="info ib"><span>🎯</span><p><strong>Key concept:</strong> OpenCV stores colour in <strong>BGR order</strong> (Blue, Green, Red — not RGB!). Grayscale collapses the three channels into one brightness value using a weighted formula.</p></div>
+  <div class="icard">
+    <h3>Interactive: mix a pixel → see its grayscale equivalent</h3>
+    <div class="srow"><label style="color:var(--blue);font-weight:600">Blue</label><input type="range" min="0" max="255" value="100" id="sB" oninput="upPxGray()"><span class="val" id="vB">100</span></div>
+    <div class="srow"><label style="color:var(--green);font-weight:600">Green</label><input type="range" min="0" max="255" value="160" id="sG" oninput="upPxGray()"><span class="val" id="vG">160</span></div>
+    <div class="srow"><label style="color:var(--red);font-weight:600">Red</label><input type="range" min="0" max="255" value="80" id="sR" oninput="upPxGray()"><span class="val" id="vR">80</span></div>
+    <div style="display:flex;gap:20px;align-items:center;margin-top:14px;flex-wrap:wrap">
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Colour pixel</div><div id="cbox" style="width:90px;height:90px;border-radius:10px;border:1px solid var(--line)"></div></div>
+      <div style="font-size:22px;color:var(--ink3)">→</div>
+      <div style="text-align:center"><div style="font-size:.72rem;color:var(--ink3);margin-bottom:7px">Grayscale pixel</div><div id="gbox" style="width:90px;height:90px;border-radius:10px;border:1px solid var(--line)"></div></div>
+      <div style="flex:1;min-width:180px">
+        <div style="font-size:.72rem;color:var(--ink3);margin-bottom:6px">ITU-R BT.601 formula</div>
+        <div class="math" id="gf">Y = 0.114×B + 0.587×G + 0.299×R</div>
+        <div style="font-size:.82rem;color:var(--ink3);margin-top:6px">Result: <strong id="gv">—</strong> / 255</div>
+      </div>
+    </div>
+  </div>
+  <div class="codebox"><pre><span class="cm"># Add inside the while loop after cap.read()</span>
+gray_frame = cv2.<span class="fn">cvtColor</span>(frame, cv2.COLOR_BGR2GRAY)
+
+<span class="cm"># Show both windows side by side</span>
+cv2.<span class="fn">imshow</span>(<span class="str">'Original Colour'</span>, frame)
+cv2.<span class="fn">imshow</span>(<span class="str">'Grayscale'</span>, gray_frame)</pre></div>
+  <div class="info ia"><span>📐</span><p><strong>Class 12 deeper dive:</strong> The weights 0.299 (R), 0.587 (G), 0.114 (B) are NOT equal because the human eye is most sensitive to green light. These are the ITU-R BT.601 coefficients used in broadcast TV since the 1980s — the same standard in every phone camera today.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=Why%20does%20the%20grayscale%20formula%20give%20green%20the%20highest%20weight%20(0.587)?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Why is green weighted highest?</a>
+</section>
+
+<!-- ══ CV 3: PIXEL ARRAYS ══ -->
+<section class="sec" id="s-cv3">
+  <div class="eyebrow cv">Module 2 · Concept 03</div>
+  <h2 class="sec-h">The Matrix Behind the Magic</h2>
+  <p class="sec-lead">An image IS a matrix. Every visual operation is just maths on numbers. Flip an image = reverse an array. Brighten = add a constant. Edge detect = apply a filter matrix (convolution).</p>
+  <div class="icard">
+    <h3>Thresholding simulator — drag the slider</h3>
+    <p>Thresholding converts a grayscale image into binary: pixels above the threshold become white (255), below become black (0).</p>
+    <div class="srow"><label>Threshold</label><input type="range" min="0" max="255" value="127" id="sT" oninput="upT()"><span class="val" id="vT">127</span></div>
+    <div id="tvis" style="display:flex;gap:5px;flex-wrap:wrap;margin-top:1rem"></div>
+    <p style="font-size:.72rem;color:var(--ink3);margin-top:10px">Each circle = one pixel. White = above threshold (255). Dark = below threshold (0).</p>
+  </div>
+  <div class="codebox"><pre><span class="kw">import</span> cv2, numpy <span class="kw">as</span> np
+
+blank = np.<span class="fn">zeros</span>((<span class="num">300</span>, <span class="num">300</span>, <span class="num">3</span>), dtype=np.uint8) <span class="cm"># black</span>
+
+pixel = frame[<span class="num">100</span>, <span class="num">150</span>]  <span class="cm"># row 100, col 150</span>
+<span class="fn">print</span>(<span class="str">"BGR values:"</span>, pixel)  <span class="cm"># [120 45 200]</span>
+
+<span class="cm"># THRESHOLDING: pixels → black or white only</span>
+_, binary = cv2.<span class="fn">threshold</span>(gray_frame, <span class="num">127</span>, <span class="num">255</span>, cv2.THRESH_BINARY)
+<span class="cm"># pixel > 127  →  255 (white)
+# pixel ≤ 127  →  0   (black)</span>
+
+cv2.<span class="fn">imshow</span>(<span class="str">'Binary'</span>, binary)</pre></div>
+  <div class="info ip"><span>📚</span><p><strong>Class 12 — NumPy operations on images:</strong><br>
+  • Brighten: <code>cv2.add(frame, 50)</code><br>
+  • Flip horizontal: <code>cv2.flip(frame, 1)</code><br>
+  • Crop ROI: <code>frame[y1:y2, x1:x2]</code><br>
+  • Rotate: <code>cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)</code></p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20is%20thresholding%20in%20computer%20vision%20and%20what%20are%20its%20real-world%20applications?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Thresholding applications</a>
+</section>
+
+<!-- ══ CV 4: EDGE DETECTION ══ -->
+<section class="sec" id="s-cv4">
+  <div class="eyebrow cv">Module 2 · Concept 04</div>
+  <h2 class="sec-h">Finding Boundaries: Canny Edge Detection</h2>
+  <p class="sec-lead">Edges are where brightness changes sharply between neighbouring pixels. By finding sharp changes, we can outline every object without knowing what those objects are.</p>
+  <div class="icard">
+    <h3>What is a gradient? — spot the edge</h3>
+    <div id="gvis"></div>
+    <p style="font-size:.72rem;color:var(--ink3);text-align:center">The green column is where the difference between neighbours is largest — that is the edge.</p>
+  </div>
+  <div class="icard">
+    <h3>Canny's 4-step process</h3>
+    <div class="hstep"><div class="hicon" style="background:#E6F1FB;color:var(--blue)">1</div><div class="htext"><h4>Gaussian blur</h4><p>Slightly blur the image first to remove random camera noise, which can look like fake edges.</p></div></div>
+    <div class="hstep"><div class="hicon" style="background:#E1F5EE;color:var(--green)">2</div><div class="htext"><h4>Gradient calculation (Sobel)</h4><p>For every pixel, compute how much brightness changes in X and Y directions. High change = potential edge.</p></div></div>
+    <div class="hstep"><div class="hicon" style="background:#FAEEDA;color:var(--amber)">3</div><div class="htext"><h4>Non-maximum suppression</h4><p>Thin out wide edges. Keep only pixels that are the local peak in their gradient direction.</p></div></div>
+    <div class="hstep"><div class="hicon" style="background:#EEEDFE;color:#534AB7">4</div><div class="htext"><h4>Double threshold + hysteresis</h4><p>Strong edges (above high threshold) are kept. Weak edges kept only if connected to strong ones.</p></div></div>
+  </div>
+  <div class="icard" style="background:#E1F5EE">
+    <h3 style="color:var(--green)">Experiment: what do the thresholds do?</h3>
+    <div class="srow"><label>Low threshold</label><input type="range" min="10" max="200" value="100" id="sL" oninput="upC()"><span class="val" id="vL">100</span></div>
+    <div class="srow"><label>High threshold</label><input type="range" min="50" max="255" value="200" id="sH" oninput="upC()"><span class="val" id="vH">200</span></div>
+    <div id="cdesc" style="margin-top:.75rem;padding:11px 14px;border-radius:8px;font-size:.8rem;background:var(--paper);color:var(--ink3);line-height:1.55"></div>
+  </div>
+  <div class="codebox"><pre><span class="cm"># Inside the while loop, after grayscale</span>
+blurred = cv2.<span class="fn">GaussianBlur</span>(gray_frame, (<span class="num">5</span>,<span class="num">5</span>), <span class="num">0</span>)
+edges   = cv2.<span class="fn">Canny</span>(blurred, <span class="num">100</span>, <span class="num">200</span>)
+cv2.<span class="fn">imshow</span>(<span class="str">'Edges'</span>, edges)
+
+<span class="cm"># Experiment:
+# Canny(blurred,  50, 150)  →  many edges, noisy
+# Canny(blurred, 100, 200)  →  balanced (recommended)
+# Canny(blurred, 150, 250)  →  fewer, cleaner edges</span></pre></div>
+  <div class="info ia"><span>🚗</span><p><strong>Real-world application:</strong> Tesla Autopilot and Waymo use edge detection as a first step to identify lane markings, pedestrian outlines, and obstacles before deeper neural network processing.</p></div>
+  <div class="info ip"><span>📐</span><p><strong>Class 12 maths:</strong> Gradient magnitude: G = √(Gx² + Gy²) where Gx and Gy are convolutions with the Sobel operator — a direct application of partial derivatives to a 2D matrix.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20does%20the%20Canny%20edge%20detection%20algorithm%20work%20step%20by%20step?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Canny algorithm deep dive</a>
+</section>
+
+<!-- ══ CV 5: FACE DETECTION ══ -->
+<section class="sec" id="s-cv5">
+  <div class="eyebrow cv">Module 2 · Concept 05</div>
+  <h2 class="sec-h">Object Intelligence: Face &amp; Eye Detection</h2>
+  <p class="sec-lead">The machine is not "thinking" — it is pattern matching. A tiny window slides across your image thousands of times, checking whether pixel patterns match a pre-learned face recipe (a Haar Cascade).</p>
+  <div class="icard">
+    <h3 style="color:#534AB7">What is a Haar Cascade?</h3>
+    <p>Invented by Viola and Jones (2001). Faces share universal patterns: eye sockets are darker than the nose bridge, the forehead lighter than the eyebrows. These rectangular brightness-difference patterns (Haar features) are compared millions of times across the image.</p>
+  </div>
+  <div class="icard" style="background:#EEEDFE">
+    <h3 style="color:#534AB7">Sliding window — minNeighbors simulator</h3>
+    <div class="srow"><label>minNeighbors</label><input type="range" min="1" max="10" value="5" id="mn" oninput="upFace()"><span class="val" id="mnv">5</span></div>
+    <div id="face-insight" style="margin-top:8px;padding:10px 13px;border-radius:8px;font-size:.78rem;background:var(--paper);color:var(--ink3);line-height:1.55"></div>
+  </div>
+  <div class="codebox"><pre><span class="kw">import</span> cv2
+
+face_cascade = cv2.<span class="fn">CascadeClassifier</span>(
+    cv2.data.haarcascades + <span class="str">'haarcascade_frontalface_default.xml'</span>)
+eye_cascade  = cv2.<span class="fn">CascadeClassifier</span>(
+    cv2.data.haarcascades + <span class="str">'haarcascade_eye.xml'</span>)
+
+cap = cv2.<span class="fn">VideoCapture</span>(<span class="num">0</span>)
+<span class="kw">while</span> <span class="kw">True</span>:
+    ret, frame = cap.<span class="fn">read</span>()
+    <span class="kw">if not</span> ret: <span class="kw">break</span>
+    gray = cv2.<span class="fn">cvtColor</span>(frame, cv2.COLOR_BGR2GRAY)
+
+    faces = face_cascade.<span class="fn">detectMultiScale</span>(gray, <span class="num">1.3</span>, <span class="num">5</span>)
+    <span class="kw">for</span> (x,y,w,h) <span class="kw">in</span> faces:
+        cv2.<span class="fn">rectangle</span>(frame,(x,y),(x+w,y+h),(<span class="num">255</span>,<span class="num">0</span>,<span class="num">0</span>),<span class="num">2</span>)
+
+        roi_gray  = gray[y:y+h, x:x+w]    <span class="cm"># search eyes in face only</span>
+        roi_color = frame[y:y+h, x:x+w]
+        eyes = eye_cascade.<span class="fn">detectMultiScale</span>(roi_gray)
+        <span class="kw">for</span> (ex,ey,ew,eh) <span class="kw">in</span> eyes:
+            cv2.<span class="fn">rectangle</span>(roi_color,(ex,ey),(ex+ew,ey+eh),(<span class="num">0</span>,<span class="num">255</span>,<span class="num">0</span>),<span class="num">2</span>)
+
+    cv2.<span class="fn">imshow</span>(<span class="str">'Detection'</span>, frame)
+    <span class="kw">if</span> cv2.<span class="fn">waitKey</span>(<span class="num">1</span>) & <span class="num">0xFF</span> == <span class="fn">ord</span>(<span class="str">'q'</span>): <span class="kw">break</span>
+
+cap.<span class="fn">release</span>(); cv2.<span class="fn">destroyAllWindows</span>()</pre></div>
+  <div class="info ip"><span>📚</span><p><strong>Class 12 — limitations:</strong> Haar cascades fail on tilted faces, low light, and non-frontal angles. Modern systems use CNNs (Convolutional Neural Networks) that learn their own features automatically. That is your gateway to deep learning — the next level.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20are%20the%20limitations%20of%20Haar%20cascade%20face%20detection%20and%20how%20do%20CNNs%20improve%20it?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Haar vs CNN face detection</a>
+</section>
+
+<!-- ══ CV 6: DEEP LEARNING ══ -->
+<section class="sec" id="s-cv6">
+  <div class="eyebrow cv">Module 2 · Concept 06</div>
+  <h2 class="sec-h">Deep Learning: MobileNetV2 Image Classification</h2>
+  <p class="sec-lead">Skip training entirely. MobileNetV2 was already trained on 1.2 million images across 1000 classes. Use that knowledge directly to classify your own photos in seconds.</p>
+  <div class="pipe">
+    <div class="pstep" style="background:#E6F1FB;color:#0C447C">📷 Your photo<br><small>any image</small></div><span class="parr">→</span>
+    <div class="pstep" style="background:#E1F5EE;color:#085041">📐 Resize<br><small>224×224 px</small></div><span class="parr">→</span>
+    <div class="pstep" style="background:#FAEEDA;color:#633806">⚙️ preprocess<br><small>[0,255]→[-1,1]</small></div><span class="parr">→</span>
+    <div class="pstep" style="background:#042C53;color:#B5D4F4">🧠 MobileNetV2<br><small>154 layers</small></div><span class="parr">→</span>
+    <div class="pstep" style="background:#EAF3DE;color:#27500A">🏷 Top-3 labels<br><small>with confidence</small></div>
+  </div>
+  <div class="codebox"><pre><span class="kw">from</span> tensorflow.keras.applications <span class="kw">import</span> MobileNetV2
+<span class="kw">from</span> tensorflow.keras.applications.mobilenet_v2 <span class="kw">import</span> preprocess_input, decode_predictions
+<span class="kw">from</span> tensorflow.keras.preprocessing <span class="kw">import</span> image
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+model = <span class="fn">MobileNetV2</span>(weights=<span class="str">'imagenet'</span>)  <span class="cm"># downloads ~14 MB once</span>
+
+img  = image.<span class="fn">load_img</span>(<span class="str">'photo.jpg'</span>, target_size=(<span class="num">224</span>,<span class="num">224</span>))
+x    = image.<span class="fn">img_to_array</span>(img)
+x    = np.<span class="fn">expand_dims</span>(x, <span class="num">0</span>)
+x    = <span class="fn">preprocess_input</span>(x)    <span class="cm"># CRITICAL — normalise to [-1, 1]</span>
+
+preds = model.<span class="fn">predict</span>(x)
+<span class="kw">for</span> lbl, name, prob <span class="kw">in</span> <span class="fn">decode_predictions</span>(preds, top=<span class="num">3</span>)[<span class="num">0</span>]:
+    <span class="fn">print</span>(<span class="str">f"</span>{name}<span class="str">:</span> {prob:.1%}<span class="str">"</span>)  <span class="cm"># e.g. "tabby_cat: 82.4%"</span></pre></div>
+  <div class="info ic"><span>⚠️</span><p><strong>Critical:</strong> <code>preprocess_input()</code> normalises pixel values from [0,255] to [-1,1], which is the range MobileNetV2 was trained with. Skipping this gives completely meaningless predictions. This one line matters more than it looks.</p></div>
+  <div class="icard">
+    <h3>Transfer learning — freeze and train</h3>
+    <div class="srow"><label>Epochs trained</label><input type="range" min="1" max="20" value="10" id="ep" oninput="updEpoch()"><span class="val" id="epv">10</span></div>
+    <div style="height:8px;background:var(--cream2);border-radius:4px;margin-top:8px;overflow:hidden"><div id="acc-fill" style="height:8px;background:var(--green);border-radius:4px;transition:width .4s;width:75%"></div></div>
+    <div id="acc-lbl" style="font-size:.72rem;color:var(--ink3);margin-top:5px;font-family:'IBM Plex Mono',monospace"></div>
+  </div>
+  <div class="info ip"><span>📚</span><p><strong>What is transfer learning?</strong> MobileNetV2 learned to recognise edges, textures, and shapes from 1.2 million images. Freeze those 154 layers (<code>base.trainable = False</code>). Add 2 new layers and train only those on your data. Result: a custom classifier trained in minutes on a CPU, not days on a GPU.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20is%20transfer%20learning%20and%20how%20do%20I%20fine-tune%20MobileNetV2%20on%20my%20own%20dataset?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Transfer learning explained</a>
+</section>
+
+<!-- ══ OR 1: LOAD DATA ══ -->
+<section class="sec" id="s-or1">
+  <div class="eyebrow or">Module 3 · Concept 01</div>
+  <h2 class="sec-h">Orange Data Mining: Load Your Dataset</h2>
+  <p class="sec-lead">Orange is a drag-and-drop machine learning tool — no code required. Every ML workflow starts with loading data. Orange ships with classic datasets like Iris built in.</p>
+  <div class="icard">
+    <h3 style="color:var(--amber)">Step-by-step: Load Iris dataset</h3>
+    <div class="or-workflow">
+      <div class="or-widget" style="background:#FAEEDA;border-color:#EF9F27;color:#412402">📂 File widget</div>
+      <span class="or-arrow">→</span>
+      <div class="or-widget" style="background:#E6F1FB;border-color:#378ADD;color:#042C53">📋 Data Table</div>
+    </div>
+    <div class="hstep"><div class="hicon" style="background:#FAEEDA;color:var(--amber)">1</div><div class="htext"><h4>Drag "File" widget onto the canvas</h4><p>Open Orange → drag the File widget from the left panel onto the white canvas area.</p></div></div>
+    <div class="hstep"><div class="hicon" style="background:#FAEEDA;color:var(--amber)">2</div><div class="htext"><h4>Load Iris.tab (built-in)</h4><p>Double-click the File widget → click "…" → choose Iris from the built-in datasets dropdown.</p></div></div>
+    <div class="hstep"><div class="hicon" style="background:#FAEEDA;color:var(--amber)">3</div><div class="htext"><h4>Add Data Table and connect</h4><p>Drag a Data Table widget onto canvas. Draw a connection line from File to Data Table. Double-click to inspect.</p></div></div>
+    <div class="fbox gold">You should see:
+  150 rows (samples)
+  4 feature columns (petal/sepal measurements)
+  1 class column (iris species)
+
+iris-setosa: 50 rows
+iris-versicolor: 50 rows
+iris-virginica: 50 rows</div>
+  </div>
+  <div class="info ib"><span>🎯</span><p><strong>Why Iris?</strong> It has only 150 rows (fast to process), 4 numeric features (easy to visualise), 3 classes that are partially overlapping (interesting to classify), and it is the "Hello World" of machine learning — used since 1936.</p></div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20is%20the%20Iris%20dataset%20and%20why%20is%20it%20the%20classic%20machine%20learning%20beginner%20dataset?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Why is Iris the classic ML dataset?</a>
+</section>
+
+<!-- ══ OR 2: VISUALISE ══ -->
+<section class="sec" id="s-or2">
+  <div class="eyebrow or">Module 3 · Concept 02</div>
+  <h2 class="sec-h">Visualise Before You Model</h2>
+  <p class="sec-lead">Always visualise your data before training a model. A scatter plot shows whether your classes are separable — and how hard the classification problem actually is.</p>
+  <div class="icard">
+    <h3 style="color:var(--amber)">Orange workflow</h3>
+    <div class="or-workflow">
+      <div class="or-widget" style="background:#FAEEDA;border-color:#EF9F27;color:#412402">📂 File</div>
+      <span class="or-arrow">→</span>
+      <div class="or-widget" style="background:#E1F5EE;border-color:#1D9E75;color:#04342C">📈 Scatter Plot</div>
+      <span class="or-arrow">&</span>
+      <div class="or-widget" style="background:#E6F1FB;border-color:#378ADD;color:#042C53">📊 Distributions</div>
+      <span class="or-arrow">&</span>
+      <div class="or-widget" style="background:#EEEDFE;border-color:#7F77DD;color:#26215C">📦 Box Plot</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="icard">
+      <h3>Scatter Plot settings</h3>
+      <div class="fbox gold">X-axis: petal length
+Y-axis: petal width
+Color:  iris (class)
+
+What to notice:
+→ Setosa: clean cluster
+  (bottom-left, easy)
+→ Versicolor & Virginica
+  overlap (harder)</div>
+      <div class="info ic"><span>⚠️</span><p>Class overlap = classification difficulty. Where circles of two colours mix, the model will make mistakes — no algorithm can be 100% accurate there.</p></div>
+    </div>
+    <div class="icard">
+      <h3>Distributions widget</h3>
+      <div class="fbox gold">Click each feature:
+  petal length → bimodal
+    (setosa vs others)
+  sepal width  → normal
+    (no strong separation)
+
+Box Plot (group by iris):
+  → Shows median + IQR
+  → Outlier dots visible
+  → Setosa clearly separate</div>
+      <div class="info ig"><span>💡</span><p>Bimodal distribution in a feature = strong predictor. If the feature separates classes visually, the model will learn it easily.</p></div>
+    </div>
+  </div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20does%20it%20mean%20when%20classes%20overlap%20in%20a%20scatter%20plot%20for%20machine%20learning?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Class overlap in scatter plots</a>
+</section>
+
+<!-- ══ OR 3: CLASSIFIER ══ -->
+<section class="sec" id="s-or3">
+  <div class="eyebrow or">Module 3 · Concept 03</div>
+  <h2 class="sec-h">Train Your First Classifier</h2>
+  <p class="sec-lead">A Decision Tree is the most interpretable ML model — you can literally see its decisions as a tree of if-then rules. Perfect for understanding how classifiers think.</p>
+  <div class="icard">
+    <h3 style="color:var(--amber)">Orange workflow</h3>
+    <div class="or-workflow">
+      <div class="or-widget" style="background:#FAEEDA;border-color:#EF9F27;color:#412402">📂 File</div>
+      <span class="or-arrow">→</span>
+      <div class="or-widget" style="background:#E6F1FB;border-color:#378ADD;color:#042C53">🌳 Tree</div>
+      <span class="or-arrow">→</span>
+      <div class="or-widget" style="background:#E1F5EE;border-color:#1D9E75;color:#04342C">📊 Test & Score</div>
+      <span class="or-arrow">→</span>
+      <div class="or-widget" style="background:#EEEDFE;border-color:#7F77DD;color:#26215C">🔲 Confusion Matrix</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="icard">
+        <h3>Test &amp; Score settings</h3>
+        <div class="fbox gold">Sampling: Cross-validation
+k-folds: 10
+
+Metrics to check:
+  CA  = Classification Accuracy
+        (% correct predictions)
+  AUC = Area Under ROC Curve
+        (1.0 perfect, 0.5 random)
+  F1  = Harmonic mean of
+        precision and recall</div>
+      </div>
+      <div class="icard" style="background:#FAEEDA">
+        <h3 style="color:var(--amber)">Max depth simulator</h3>
+        <div class="srow"><label>Max depth</label><input type="range" min="1" max="10" value="4" id="depth" oninput="upDepth()"><span class="val" id="depthv">4</span></div>
+        <div id="depth-insight" style="margin-top:8px;font-size:.78rem;color:var(--ink3);line-height:1.55;font-family:'IBM Plex Mono',monospace"></div>
+      </div>
+    </div>
+    <div>
+      <div class="icard">
+        <h3>Tree Viewer — add to workflow</h3>
+        <div class="fbox gold">Add: Tree → Tree Viewer
+
+Look for:
+  Root node: most informative
+    feature (highest info gain)
+  Each split: feature + threshold
+  Leaf nodes: predicted class
+    + sample count
+
+Also: Tree → Nomogram
+  → Feature importance bars</div>
+      </div>
+      <div class="info ib"><span>📚</span><p><strong>Cross-validation:</strong> Splits data into 10 parts. Trains on 9, tests on 1. Repeats 10 times. Result: every sample is tested exactly once. Far more reliable than a single train/test split.</p></div>
+    </div>
+  </div>
+  <a class="ask-btn" href="https://claude.ai/new?q=What%20is%20cross-validation%20in%20machine%20learning%20and%20why%20is%20it%20better%20than%20a%20train-test%20split?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: Cross-validation explained</a>
+</section>
+
+<!-- ══ OR 4: COMPARE MODELS ══ -->
+<section class="sec" id="s-or4">
+  <div class="eyebrow or">Module 3 · Concept 04</div>
+  <h2 class="sec-h">Compare Multiple Models Side by Side</h2>
+  <p class="sec-lead">Connect several classifiers to one Test &amp; Score widget to find the best model for your data. This is how real ML engineers pick algorithms.</p>
+  <div class="icard">
+    <h3 style="color:var(--amber)">Multi-model workflow</h3>
+    <div class="fbox gold">File ──→ Tree            ─┐
+            Random Forest   ─│
+            Naive Bayes     ─┼→ Test & Score → Confusion Matrix
+            kNN             ─│
+            Logistic Reg.   ─┘</div>
+  </div>
+  <div class="two-col">
+    <div class="icard">
+      <h3>AUC guide</h3>
+      <table class="htable">
+        <thead><tr><th>AUC range</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="dot" style="background:var(--green)"></span>0.95–1.00</td><td>Excellent</td></tr>
+          <tr><td><span class="dot" style="background:#97C459"></span>0.80–0.95</td><td>Good, tune further</td></tr>
+          <tr><td><span class="dot" style="background:var(--amber)"></span>0.70–0.80</td><td>Acceptable</td></tr>
+          <tr><td><span class="dot" style="background:var(--red)"></span>&lt;0.70</td><td>Need more data / features</td></tr>
+        </tbody>
+      </table>
+      <div class="info ia"><span>💡</span><p>AUC is better than accuracy for imbalanced datasets. If 95% of samples are class A, a model that always predicts A gets 95% accuracy but AUC = 0.5 (random).</p></div>
+    </div>
+    <div class="icard">
+      <h3>Cluster without labels: k-Means</h3>
+      <div class="or-workflow">
+        <div class="or-widget" style="background:#FAEEDA;border-color:#EF9F27;color:#412402">File</div>
+        <span class="or-arrow">→</span>
+        <div class="or-widget" style="background:#E6F1FB;border-color:#378ADD;color:#042C53">Select Cols</div>
+        <span class="or-arrow">→</span>
+        <div class="or-widget" style="background:#E1F5EE;border-color:#1D9E75;color:#04342C">k-Means</div>
+        <span class="or-arrow">→</span>
+        <div class="or-widget" style="background:#EEEDFE;border-color:#7F77DD;color:#26215C">Silhouette</div>
+      </div>
+      <div class="fbox gold">Steps:
+1. Select Columns: move 'iris'
+   to Ignored (hide labels)
+2. k-Means: set k = 3
+3. Silhouette score:
+   ~1.0 = distinct clusters
+   ~0.0 = overlapping clusters
+
+Try k=2 and k=4:
+  Does Silhouette go up or down?</div>
+    </div>
+  </div>
+  <a class="ask-btn" href="https://claude.ai/new?q=How%20do%20I%20choose%20the%20best%20machine%20learning%20model%20and%20what%20does%20AUC-ROC%20mean?" target="_blank" style="margin-top:14px"><span class="ico">↗</span> Ask Claude: How to compare ML models</a>
+</section>
+
+<!-- ══ QUIZ ══ -->
+<section class="sec" id="s-quiz">
+  <div class="eyebrow">Review · Quick Quiz</div>
+  <h2 class="sec-h">Test Your Understanding</h2>
+  <p class="sec-lead">10 questions across all three modules. Instant feedback on every answer.</p>
+  <div class="quiz-wrap">
+    <div id="quiz-q"></div>
+    <div id="quiz-sc" class="q-sc">
+      <div class="big" id="sc-num"></div>
+      <div class="msg" id="sc-msg"></div>
+      <button class="q-rs" onclick="restartQuiz()">↺ Try again</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ─── NAVIGATION ───
+const visited = new Set(['s-home']);
+function go(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.sb-link').forEach(a => a.classList.remove('on'));
+  const sec = document.getElementById(id);
+  if (sec) { sec.classList.add('on'); }
+  const link = document.querySelector(`.sb-link[data-s="${id}"]`);
+  if (link) { link.classList.add('on'); link.classList.add('done'); }
+  visited.add(id);
+  const total = document.querySelectorAll('.sb-link[data-s]').length;
+  const pct = Math.round(visited.size / total * 100);
+  document.getElementById('sbpf').style.width = pct + '%';
+  document.getElementById('sbpt').textContent = visited.size + ' of ' + total + ' topics explored';
+  document.getElementById('main').scrollTop = 0;
+  document.getElementById('sb').classList.remove('open');
+  // init section-specific code
+  if (id === 's-types') initTypeGrids();
+  if (id === 's-grid') initResGrid();
+  if (id === 's-matrix') sg('letter');
+  if (id === 's-recon') initRecon();
+  if (id === 's-cv4') initGradVis();
+  if (id === 's-quiz') startQuiz();
+}
+document.querySelectorAll('.sb-link[data-s]').forEach(a => {
+  a.addEventListener('click', () => go(a.dataset.s));
+});
+
+// ─── PIXEL MIXER ───
+function upPx() {
+  const R = +document.getElementById('sr').value;
+  const G = +document.getElementById('sg').value;
+  const B = +document.getElementById('sb2').value;
+  document.getElementById('vr').textContent = R;
+  document.getElementById('vg').textContent = G;
+  document.getElementById('vb').textContent = B;
+  const col = `rgb(${R},${G},${B})`;
+  const lum = 0.299*R + 0.587*G + 0.114*B;
+  const tc = lum > 140 ? '#1a1510' : '#fff';
+  document.getElementById('cprev').style.background = col;
+  document.getElementById('cprev').style.color = tc;
+  document.getElementById('cprev').textContent = `(${R}, ${G}, ${B})`;
+  document.getElementById('bigpx').style.background = col;
+  document.getElementById('bigpx').style.color = tc;
+  document.getElementById('bigpx-lbl').textContent = `(${R},${G},${B})\nR=${R} G=${G}\nB=${B}`;
+}
+upPx();
+
+// ─── IMAGE TYPES ───
+function initTypeGrids() {
+  // Binary grid
+  const bg = document.getElementById('bin-grid');
+  if (bg && !bg.dataset.init) {
+    bg.dataset.init = '1';
+    const pat = [1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1];
+    pat.forEach((v,i) => {
+      const d = document.createElement('div');
+      d.style.cssText = `width:28px;height:28px;border-radius:3px;background:${v?'#f5f0e8':'#1a1510'};cursor:pointer;transition:background .2s`;
+      d.dataset.v = v;
+      d.onclick = () => { d.dataset.v = d.dataset.v==='1'?'0':'1'; d.style.background = d.dataset.v==='1'?'#f5f0e8':'#1a1510'; };
+      bg.appendChild(d);
+    });
+  }
+  // Grayscale grid
+  const gg = document.getElementById('gray-grid');
+  if (gg && !gg.dataset.init) {
+    gg.dataset.init = '1';
+    const vs = [20,40,80,120,160,200,240,255,30,60,100,140,180,220,250,230,50,90,130,170,210,240,220,190,70,110,150,190,230,250,210,170,80,120,160,200,240,230,200,150,90,130,170,210,240,220,180,130,100,140,180,220,250,210,170,120,110,150,190,230,250,220,180,130];
+    vs.forEach(v => {
+      const d = document.createElement('div');
+      d.style.cssText = `width:28px;height:28px;border-radius:3px;background:rgb(${v},${v},${v});cursor:default;font-family:'IBM Plex Mono',monospace;font-size:0;display:flex;align-items:center;justify-content:center;transition:font-size .2s`;
+      d.style.color = v > 128 ? '#000' : '#fff';
+      d.textContent = v;
+      d.onmouseenter = () => { d.style.fontSize = '7px'; };
+      d.onmouseleave = () => { d.style.fontSize = '0'; };
+      gg.appendChild(d);
+    });
+  }
+  // RGB grid
+  const rg = document.getElementById('rgb-grid');
+  if (rg && !rg.dataset.init) {
+    rg.dataset.init = '1';
+    const makeRGB = () => {
+      rg.innerHTML = '';
+      for (let i = 0; i < 36; i++) {
+        const r = Math.floor(Math.random()*256), g = Math.floor(Math.random()*256), b = Math.floor(Math.random()*256);
+        const d = document.createElement('div');
+        d.style.cssText = `width:28px;height:28px;border-radius:3px;background:rgb(${r},${g},${b});cursor:pointer`;
+        rg.appendChild(d);
+      }
+    };
+    makeRGB();
+    rg.onclick = makeRGB;
+  }
+}
+function showType(t, btn) {
+  document.querySelectorAll('[id^="type-"]').forEach(el => el.classList.remove('on'));
+  document.getElementById('type-' + t).classList.add('on');
+  document.querySelectorAll('#s-types .tbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  initTypeGrids();
+}
+
+// ─── RESOLUTION GRID ───
+function initResGrid() { setRes(4, document.querySelector('#s-grid .tbtn.on') || {classList:{add:()=>{},remove:()=>{}}}); }
+function setRes(n, btn) {
+  document.querySelectorAll('#s-grid .tbtn').forEach(b => b.classList.remove('on'));
+  if (btn && btn.classList) btn.classList.add('on');
+  const face = makeFaceData(n);
+  const pw = Math.min(8, Math.floor(192 / n));
+  const cont = document.getElementById('res-grid');
+  if (!cont) return;
+  cont.style.cssText = `display:grid;grid-template-columns:repeat(${n},${pw}px);gap:0;`;
+  cont.innerHTML = '';
+  face.forEach(v => {
+    const d = document.createElement('div');
+    d.style.cssText = `width:${pw}px;height:${pw}px;background:rgb(${v},${v},${v})`;
+    cont.appendChild(d);
+  });
+  document.getElementById('res-info').textContent = `${n}×${n} grid`;
+  const code = document.getElementById('res-code');
+  if (code) {
+    const detail = n<=4?'Very low (pixelated)':n<=8?'Low (blocky)':n<=16?'Medium':n<=32?'Good':n<=64?'High':'Very high';
+    code.textContent = `Resolution: ${n} × ${n} = ${n*n} pixels\nMemory:     ${n*n} × 3 = ${n*n*3} bytes\nDetail:     ${detail}`;
+  }
+}
+function makeFaceData(n) {
+  const d = [];
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const ny = r/n, nx = c/n;
+      const cx = 0.5, cy = 0.45;
+      const dist = Math.sqrt((nx-cx)**2+(ny-cy)**2);
+      let v = 220;
+      if (dist < 0.42) v = 200;
+      if (dist < 0.38) v = 220;
+      if (Math.abs(nx-0.35)<0.08 && Math.abs(ny-0.38)<0.07) v = 60;
+      if (Math.abs(nx-0.65)<0.08 && Math.abs(ny-0.38)<0.07) v = 60;
+      if (Math.abs(nx-cx)<0.15 && Math.abs(ny-0.62)<0.05) v = 80;
+      if (dist > 0.42) v = 180;
+      d.push(Math.max(0,Math.min(255,v)));
+    }
+  }
+  return d;
+}
+
+// ─── PIXEL MATRIX ───
+const grids = {
+  letter:[[0,0,100,255,100,0],[0,100,0,0,0,100],[0,100,0,0,0,0],[255,255,255,255,255,255],[255,0,0,0,0,255],[255,0,0,0,0,255]],
+  gradient:[[0,50,100,150,200,255],[0,50,100,150,200,255],[0,50,100,150,200,255],[0,50,100,150,200,255],[0,50,100,150,200,255],[0,50,100,150,200,255]],
+  edge:[[200,200,200,30,30,30],[200,200,200,30,30,30],[200,200,200,30,30,30],[200,200,200,30,30,30],[200,200,200,30,30,30],[200,200,200,30,30,30]]
+};
+function sg(t, btn) {
+  document.querySelectorAll('#s-matrix .tbtn').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  const el = document.getElementById('pgrid'); if (!el) return;
+  el.innerHTML = '';
+  el.style.cssText = 'display:flex;flex-direction:column;gap:3px';
+  grids[t].forEach(row => {
+    const rw = document.createElement('div'); rw.style.cssText = 'display:flex;gap:3px';
+    row.forEach(v => {
+      const c = document.createElement('div'); c.className = 'pcell';
+      c.style.background = `rgb(${v},${v},${v})`; c.style.color = v>128?'#000':'#fff'; c.textContent = v;
+      rw.appendChild(c);
+    });
+    el.appendChild(rw);
+  });
+}
+
+// ─── CHANNELS ───
+function upCh() {
+  const R = +document.getElementById('chR').value;
+  const G = +document.getElementById('chG').value;
+  const B = +document.getElementById('chB').value;
+  document.getElementById('cvR').textContent = R;
+  document.getElementById('cvG').textContent = G;
+  document.getElementById('cvB').textContent = B;
+  document.getElementById('ch-r').style.background = `rgb(${R},0,0)`;
+  document.getElementById('ch-g').style.background = `rgb(0,${G},0)`;
+  document.getElementById('ch-b').style.background = `rgb(0,0,${B})`;
+  document.getElementById('ch-all').style.background = `rgb(${R},${G},${B})`;
+}
+upCh();
+
+// ─── RECONSTRUCTION ANIMATION ───
+const FACE24 = (()=>{
+  const d = [];
+  for(let r=0;r<24;r++) for(let c=0;c<24;c++){
+    const ny=r/23,nx=c/23,cx=0.5,cy=0.44,dist=Math.sqrt((nx-cx)**2+(ny-cy)**2);
+    let v=210;
+    if(dist<0.44)v=200;
+    if(dist<0.4)v=215;
+    if(Math.abs(nx-0.33)<0.09&&Math.abs(ny-0.36)<0.08)v=50;
+    if(Math.abs(nx-0.67)<0.09&&Math.abs(ny-0.36)<0.08)v=50;
+    if(Math.abs(nx-cx)<0.18&&Math.abs(ny-0.62)<0.06)v=70;
+    if(ny>0.72&&ny<0.8&&Math.abs(nx-cx)<0.25)v=90;
+    if(dist>0.44)v=185;
+    d.push(Math.max(0,Math.min(255,v)));
+  }
+  return d;
+})();
+let reconAnim=null,reconIdx=0;
+function initRecon() {
+  const cv=document.getElementById('reconCanvas'); if(!cv)return;
+  const ctx=cv.getContext('2d'),pw=10;
+  ctx.fillStyle='#e4ddd0'; ctx.fillRect(0,0,240,240);
+  reconIdx=0;
+}
+function startRecon(){
+  if(reconAnim) cancelAnimationFrame(reconAnim);
+  reconIdx=0;
+  animRecon();
+}
+function resetRecon(){
+  if(reconAnim) cancelAnimationFrame(reconAnim);
+  initRecon();
+  document.getElementById('recon-info').textContent='Status: Click ▶ to begin\nRow:    0 / 24\nCol:    0 / 24\nPixels: 0 / 576';
+}
+function animRecon(){
+  const cv=document.getElementById('reconCanvas'); if(!cv)return;
+  const ctx=cv.getContext('2d'),pw=10,total=576;
+  const batch=6;
+  for(let i=0;i<batch&&reconIdx<total;i++,reconIdx++){
+    const r=Math.floor(reconIdx/24),c=reconIdx%24,v=FACE24[reconIdx];
+    ctx.fillStyle=`rgb(${v},${v},${v})`;
+    ctx.fillRect(c*pw,r*pw,pw,pw);
+  }
+  const r=Math.floor(reconIdx/24),c=reconIdx%24;
+  document.getElementById('recon-info').textContent=
+    `Status: ${reconIdx>=total?'Complete ✓':'Reconstructing...'}\nRow:    ${Math.min(r,23)} / 23\nCol:    ${c} / 23\nPixels: ${reconIdx} / 576`;
+  if(reconIdx<total) reconAnim=requestAnimationFrame(animRecon);
+}
+
+// ─── GRAYSCALE MIXER (CV2) ───
+function upPxGray(){
+  const B=+document.getElementById('sB').value,G=+document.getElementById('sG').value,R=+document.getElementById('sR').value;
+  document.getElementById('vB').textContent=B; document.getElementById('vG').textContent=G; document.getElementById('vR').textContent=R;
+  document.getElementById('cbox').style.background=`rgb(${R},${G},${B})`;
+  const Y=Math.round(0.114*B+0.587*G+0.299*R);
+  document.getElementById('gbox').style.background=`rgb(${Y},${Y},${Y})`;
+  document.getElementById('gv').textContent=Y;
+  document.getElementById('gf').innerHTML=`Y = 0.114×${B} + 0.587×${G} + 0.299×${R} = <strong>${Y}</strong>`;
+}
+upPxGray();
+
+// ─── THRESHOLDING ───
+const tvs=[30,60,90,110,130,150,170,200,220,240,80,50,140,190,70,210,100,160,45,175];
+function upT(){
+  const T=+document.getElementById('sT').value; document.getElementById('vT').textContent=T;
+  const vis=document.getElementById('tvis'); if(!vis)return; vis.innerHTML='';
+  tvs.forEach(v=>{
+    const d=document.createElement('div');
+    d.style.cssText=`width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-family:'IBM Plex Mono',monospace;font-weight:500;transition:all 0.3s;margin:2px`;
+    const on=v>=T; d.style.background=on?'#f5f0e8':'#1e3a5f'; d.style.color=on?'#000':'#93c5fd';
+    d.textContent=v; vis.appendChild(d);
+  });
+}
+upT();
+
+// ─── GRADIENT VIS ───
+function initGradVis(){
+  const vals=[20,22,25,28,30,35,45,90,205,210,215,218,220,222,224];
+  const vis=document.getElementById('gvis'); if(!vis)return; vis.innerHTML='';
+  vals.forEach((v,i)=>{
+    const prev=i>0?vals[i-1]:v,diff=Math.abs(v-prev);
+    const edge=diff>50;
+    const d=document.createElement('div'); d.className='gcell';
+    d.style.background=edge?'#1a7a4a':`rgb(${v},${v},${v})`;
+    d.style.color=edge?'#9FE1CB':(v>128?'#111':'#eee');
+    d.style.height=(30+v/4)+'px';
+    d.textContent=v;
+    vis.appendChild(d);
+  });
+}
+
+// ─── CANNY THRESHOLDS ───
+function upC(){
+  const L=+document.getElementById('sL').value,H=+document.getElementById('sH').value;
+  document.getElementById('vL').textContent=L; document.getElementById('vH').textContent=H;
+  const ratio=(H/L).toFixed(1);
+  let msg='';
+  if(L<50&&H<100) msg='⚠️ Both thresholds very low — will detect almost every tiny brightness change as an edge. Expect very noisy results with many false edges.';
+  else if(L>150||H>220) msg='✅ High thresholds — only the sharpest, most definite edges will be detected. Clean result but may miss real edges.';
+  else if(H/L>=2.5&&H/L<=3.5) msg=`✅ Good ratio (1:${ratio}) — classic balanced setting. Strong edges kept, weak edges filtered. Recommended for most scenes.`;
+  else msg=`ℹ️ Ratio 1:${ratio} — ${H/L<2?'thresholds too close together, many edges kept':'reasonable, slightly more selective than classic 1:3'}. Adjust high threshold to be ~2.5–3× the low threshold.`;
+  const el=document.getElementById('cdesc'); if(el) el.textContent=msg;
+}
+upC();
+
+// ─── FACE DETECTION ───
+function upFace(){
+  const mn=+document.getElementById('mn').value; document.getElementById('mnv').textContent=mn;
+  const ins=document.getElementById('face-insight'); if(!ins)return;
+  const detected=mn<=2?4:mn<=4?3:mn<=6?2:mn<=8?1:0;
+  const msgs=['Very strict — may miss real faces, too few confirmations required per detection','Very low — many false positives will appear, most windows pass too easily','Low — likely some false detections alongside real faces','Good balance — real faces pass, most noise filtered (recommended start)','High — very confident detections only, some real faces may be missed','Very strict — only extremely clear, well-lit frontal faces will be detected'];
+  const idx=Math.min(mn<=1?0:mn<=2?1:mn<=3?2:mn<=5?3:mn<=7?4:5,5);
+  ins.textContent=`minNeighbors=${mn}: approximately ${detected} face(s) detected in a typical group photo. ${msgs[idx]}`;
+}
+upFace();
+
+// ─── TRANSFER LEARNING ───
+function updEpoch(){
+  const ep=+document.getElementById('ep').value; document.getElementById('epv').textContent=ep;
+  const acc=Math.min(96,Math.round(45+ep*3.5-ep*ep*0.09));
+  const fill=document.getElementById('acc-fill'); if(fill) fill.style.width=acc+'%';
+  const lbl=document.getElementById('acc-lbl');
+  if(lbl) lbl.textContent=`Val accuracy: ${acc}% after ${ep} epoch${ep!==1?'s':''} — ${acc>90?'excellent! Consider stopping here.':acc>80?'good. A few more epochs may help.':acc>65?'still learning, keep going.':'too early, needs more training.'}`;
+}
+updEpoch();
+
+// ─── DEPTH SIM ───
+function upDepth(){
+  const d=+document.getElementById('depth').value; document.getElementById('depthv').textContent=d;
+  const ins=document.getElementById('depth-insight'); if(!ins)return;
+  const acc=d<=2?78:d<=4?92:d<=6?94:d<=8?88:80;
+  const msg=d<=2?'Underfitting — too simple, misses real patterns in data.':d<=4?`Balanced — ~${acc}% accuracy, good generalisation.`:d<=6?`Near optimal — ~${acc}% val accuracy.`:d<=8?`Overfitting starting — memorises training data, ${acc}% on unseen data.`:`Overfit — memorises noise, poor on new samples (~${acc}%).`;
+  ins.textContent=`depth=${d}: ${msg}`;
+}
+upDepth();
+
+// ─── WEBCAM SIM ───
+let r1=false,rid=null;
+function tog1(){
+  const b=document.getElementById('b1'); if(!b)return;
+  r1=!r1; b.textContent=r1?'■ Stop':'▶ Run simulation';
+  b.style.background=r1?'#d63b2f':null; b.style.color=r1?'#fff':null;
+  if(r1) animSim(); else if(rid) cancelAnimationFrame(rid);
+}
+function animSim(){
+  if(!r1)return;
+  const cv=document.getElementById('c1'); if(!cv){r1=false;return;}
+  const ctx=cv.getContext('2d'),t=Date.now()/1000;
+  ctx.fillStyle='#0a0a1a'; ctx.fillRect(0,0,380,200);
+  for(let i=0;i<8;i++){
+    const x=40+i*42+Math.sin(t*0.7+i)*20,y=70+Math.cos(t*0.5+i)*40,r=12+i*4;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=`hsl(${190+i*22},60%,${35+Math.sin(t+i)*15}%)`; ctx.fill();
+  }
+  const l=document.getElementById('l1'); if(l) l.textContent=`● FRAME ${String(Math.floor(t*30)%1000).padStart(3,'0')}`;
+  rid=requestAnimationFrame(animSim);
+}
+
+// ─── QUIZ ───
+const Qs=[
+  {q:"How many bytes does a single RGB colour pixel use?",opts:["1 byte","2 bytes","3 bytes","4 bytes"],ans:2,exp:"Each of R, G, B is one byte (0–255). Total = 3 bytes per pixel."},
+  {q:"What does OpenCV's imread() return?",opts:["A JPEG file","A NumPy array in BGR order","A PIL Image object","A list of pixel tuples"],ans:1,exp:"imread() returns a NumPy ndarray with shape (H, W, 3) in BGR channel order — not RGB!"},
+  {q:"A 12 megapixel camera takes a photo. Approximately how large is the raw (uncompressed) file?",opts:["1.2 MB","12 MB","36 MB","120 MB"],ans:2,exp:"12,000,000 pixels × 3 bytes (RGB) = 36,000,000 bytes ≈ 36 MB raw."},
+  {q:"In the Canny edge detection formula, what does a high gradient magnitude indicate?",opts:["A flat, uniform region","A sharp brightness change between pixels","A blurry image","A dark pixel"],ans:1,exp:"Gradient = rate of brightness change. High gradient = sharp transition = edge."},
+  {q:"What does minNeighbors=5 mean in Haar face detection?",opts:["Maximum 5 faces detected","5 pixels around each face","A region must be detected 5 times to count as a face","Scale the image 5 times"],ans:2,exp:"minNeighbors requires that a candidate region be confirmed by 5 overlapping windows before being reported as a detected face. Higher = fewer false positives."},
+  {q:"What is the grayscale formula used by OpenCV (ITU-R BT.601)?",opts:["Y = (R+G+B)/3","Y = 0.299R + 0.587G + 0.114B","Y = 0.5R + 0.3G + 0.2B","Y = max(R,G,B)"],ans:1,exp:"Green (0.587) has the highest weight because human eyes are most sensitive to green light. This standard has been used in broadcast TV since the 1980s."},
+  {q:"In Orange Data Mining, what does an AUC score of 0.95 mean?",opts:["95% of data is noise","The model is 95% accurate","The model has excellent discrimination between classes","5% of features are irrelevant"],ans:2,exp:"AUC (Area Under ROC Curve) of 0.95 = excellent. 1.0 = perfect classifier. 0.5 = random guessing. It measures how well the model separates the classes."},
+  {q:"Why do we call base.trainable = False in transfer learning?",opts:["To make the model slower","To prevent the pre-trained layers from being updated during training","To delete all previous weights","To use CPU instead of GPU"],ans:1,exp:"Freezing the base model preserves the valuable weights learned from ImageNet (edges, textures, shapes). Only the new small head layers are updated — making training fast."},
+  {q:"What is a pixel?",opts:["A colour filter in a camera lens","The smallest unit of a digital image, storing R,G,B values","A unit of storage equal to 1 byte","A type of image compression"],ans:1,exp:"Pixel = Picture Element. The smallest addressable unit in a digital image. It stores exactly three integers: Red, Green, Blue, each from 0 to 255."},
+  {q:"If you call frame[100, 150] in OpenCV, what do you get?",opts:["The pixel at row 150, col 100","The pixel at row 100, col 150 as [B, G, R]","A 100×150 subimage","The brightness at position 100"],ans:1,exp:"NumPy arrays use [row, col] indexing. frame[100, 150] returns the pixel at row 100, column 150. The values are in BGR order (Blue, Green, Red) — OpenCV's format."},
+];
+let qi=0,score=0;
+function startQuiz(){qi=0;score=0;renderQ();}
+function renderQ(){
+  const qd=document.getElementById('quiz-q'),sc=document.getElementById('quiz-sc');
+  sc.style.display='none'; qd.style.display='block';
+  if(qi>=Qs.length){
+    qd.style.display='none'; sc.style.display='block';
+    document.getElementById('sc-num').textContent=score+'/'+Qs.length;
+    const pct=Math.round(score/Qs.length*100);
+    document.getElementById('sc-msg').textContent=pct>=80?'Excellent! You have mastered the material.':pct>=60?'Good work. Review the topics you missed.':'Keep studying — revisit the modules and try again.';
+    return;
+  }
+  const Q=Qs[qi];
+  qd.innerHTML=`<div class="q-txt">Q${qi+1}/${Qs.length}. ${Q.q}</div>
+    <div class="q-opts">${Q.opts.map((o,i)=>`<button class="q-opt" onclick="ansQ(${i})">${o}</button>`).join('')}</div>
+    <div class="q-fb" id="qfb"></div>
+    <button class="q-nxt" id="qnxt" onclick="qi++;renderQ()">Next →</button>`;
+}
+function ansQ(i){
+  const Q=Qs[qi];
+  document.querySelectorAll('.q-opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===Q.ans) b.classList.add('ok');
+    else if(j===i) b.classList.add('no');
+  });
+  if(i===Q.ans) score++;
+  const fb=document.getElementById('qfb'); fb.textContent=Q.exp; fb.className='q-fb show '+(i===Q.ans?'g':'b');
+  document.getElementById('qnxt').style.display='block';
+}
+function restartQuiz(){startQuiz();}
+
+// ─── INIT ───
+initTypeGrids();
+initResGrid();
+sg('letter');
+initGradVis();
+upC();
+upFace();
+updEpoch();
+upDepth();
+upT();
+startQuiz();
+</script>
+</body>
+</html>
